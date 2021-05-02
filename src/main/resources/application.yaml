@@ -1,0 +1,35 @@
+
+application:
+  bucket:
+    name: file-mail-test
+
+jwt:
+  secret: shaghala
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2MB
+      max-file-size: 5MB
+      max-request-size: 10MB
+  datasource:
+    url: ${DATASOURCE_URL:${db-url:jdbc:postgresql://localhost:5432/updated_security}}
+    username: ${POSTGRES_USER:${DATASOURCE_USERNAME:${db-user:postgres}}}
+    password: ${POSTGRES_PASSWORD:${DATASOURCE_PASSWORD:${db-pass:postgres}}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        jdbc.lob.non_contextual_creation: true
+        format_sql: true
+        enable_lazy_load_no_trans: true
+    hibernate.ddl-auto: update
+    generate-ddl: false
+    show-sql: ${show-sql:true}
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
