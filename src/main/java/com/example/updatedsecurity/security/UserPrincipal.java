@@ -1,5 +1,6 @@
 package com.example.updatedsecurity.security;
 
+import com.example.updatedsecurity.model.Group;
 import com.example.updatedsecurity.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,9 +19,13 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + this.user.getRole());
-        authorities.add(authority);
+        List<GrantedAuthority> authorities = new ArrayList<>(user.getUserGroups().size());
+
+        for(Group userGroup: user.getUserGroups()){
+            authorities.add(new SimpleGrantedAuthority(userGroup.getCode().toUpperCase()));
+        }
+//        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + this.user.getRole());
+//        authorities.add(authority);
 
         return authorities;
     }

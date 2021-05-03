@@ -3,7 +3,9 @@ package com.example.updatedsecurity.services;
 import com.example.updatedsecurity.enums.Role;
 import com.example.updatedsecurity.inpDTO.LogInInp;
 import com.example.updatedsecurity.inpDTO.RegisterInp;
+import com.example.updatedsecurity.model.Group;
 import com.example.updatedsecurity.model.User;
+import com.example.updatedsecurity.repositories.GroupRepository;
 import com.example.updatedsecurity.repositories.UserRepository;
 import com.example.updatedsecurity.security.JWTUtility;
 import com.example.updatedsecurity.security.UserPrincipal;
@@ -27,28 +29,31 @@ public class AuthService {
     private PasswordEncoder encoder;
     private JWTUtility jwtUtility;
     private UserPrincipalDetailsService userPrincipalDetailsService;
+    private GroupRepository groupRepository;
 
     public AuthService(UserRepository userRepository,
                        AuthenticationManager authenticationManager,
                        PasswordEncoder encoder, JWTUtility jwtUtility,
-                       UserPrincipalDetailsService userPrincipalDetailsService) {
+                       UserPrincipalDetailsService userPrincipalDetailsService,
+                       GroupRepository groupRepository) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.encoder = encoder;
         this.jwtUtility = jwtUtility;
         this.userPrincipalDetailsService = userPrincipalDetailsService;
+        this.groupRepository = groupRepository;
     }
 
     public String register(RegisterInp registerInp) {
         var newUser = new User(registerInp.getName(), registerInp.getEmail(),
                 encoder.encode(registerInp.getPassword()));
-
-        var role = registerInp.getRole();
-        if (StringUtils.hasLength(role) && role.equals("sonko")) {
-            newUser.setRole(Role.ADMIN);
-        } else {
-            newUser.setRole(Role.USER);
-        }
+//
+//        var role = registerInp.getRole();
+//        if (StringUtils.hasLength(role) && role.equals("sonko")) {
+//            newUser.setRole(Role.ADMIN);
+//        } else {
+//            newUser.setRole(Role.USER);
+//        }
         userRepository.save(newUser);
         return "registered";
     }
@@ -71,6 +76,36 @@ public class AuthService {
         } catch (BadCredentialsException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials");
         }
+    }
 
+    public Group addGroup(String code, String name) {
+        var group = new Group(code, name);
+        groupRepository.save(group);
+
+//        var user = userRepository.findUserByName(username).orElseThrow(
+//                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not there")
+//        );
+//
+//        user.addUserGroups(group);
+        return group;
+    }
+
+    public String addGroupToUser(String userName, String codeName){
+        var group = groupRepository.findGroupByCode(codeName).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not")
+        );
+        var user = userRepository.findUserByName(userName).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not there")
+        );
+
+        user.addUserGroups(group);
+        userRepository.save(user);
+        return "done";
+    }
+
+    public User getUserByName(String name) {
+        return userRepository.getUserByName(name).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not there")
+        );
     }
 }

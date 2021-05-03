@@ -2,6 +2,8 @@ package com.example.updatedsecurity.controller;
 
 import com.example.updatedsecurity.inpDTO.LogInInp;
 import com.example.updatedsecurity.inpDTO.RegisterInp;
+import com.example.updatedsecurity.model.Group;
+import com.example.updatedsecurity.model.User;
 import com.example.updatedsecurity.services.AuthService;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,5 +25,21 @@ public class AuthController {
     @PostMapping("/login")
     public String login(@RequestBody LogInInp logInInp) throws Exception {
         return authService.LogIn(logInInp);
+    }
+
+    @PostMapping("createGroup/{code}/{name}")
+    public Group createGroup(@PathVariable String code,
+                             @PathVariable String name) {
+        return authService.addGroup(code, name);
+    }
+    @PostMapping("/{code}/{username}")
+    public String addGroupToUser(@PathVariable String code,
+                             @PathVariable String username) {
+        return authService.addGroupToUser(username,code);
+    }
+
+    @GetMapping("/{name}")
+    public User getUserByname(@PathVariable String name) {
+        return authService.getUserByName(name);
     }
 }

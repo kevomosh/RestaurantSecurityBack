@@ -3,6 +3,8 @@ package com.example.updatedsecurity.model;
 import com.example.updatedsecurity.enums.Role;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -21,8 +23,17 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private Role role;
+    //@Column(nullable = false)
+   // private Role role;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "user_groups",
+    joinColumns = @JoinColumn(name = "user_id"),
+    inverseJoinColumns = @JoinColumn(name = "group_id"))
+    private Set<Group> userGroups = new HashSet<>();
 
     public User() {
     }
@@ -33,11 +44,29 @@ public class User {
         this.password = password;
     }
 
-    public User(String name, String email, String password, Role role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.role = role;
+//    public User(String name, String email, String password, Role role) {
+//        this.name = name;
+//        this.email = email;
+//        this.password = password;
+//        this.role = role;
+//    }
+
+    public void addUserGroups(Group group) {
+        userGroups.add(group);
+        group.getUsers().add(this);
+    }
+
+    public void removeUserGroups(Group group) {
+        userGroups.remove(group);
+        group.getUsers().remove(this);
+    }
+
+    public Set<Group> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(Set<Group> userGroups) {
+        this.userGroups = userGroups;
     }
 
     public UUID getId() {
@@ -68,13 +97,13 @@ public class User {
         return password;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
+//    public Role getRole() {
+//        return role;
+//    }
+//
+//    public void setRole(Role role) {
+//        this.role = role;
+//    }
 
     public void setPassword(String password) {
         this.password = password;
