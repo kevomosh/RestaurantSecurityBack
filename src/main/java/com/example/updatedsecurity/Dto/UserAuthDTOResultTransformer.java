@@ -21,8 +21,8 @@ public class UserAuthDTOResultTransformer implements ResultTransformer {
                 id -> new UserAuthDTO(tuple, aliasToIndexMap)
         );
 
-        userAuthDTO.getGroups().add(
-                new GroupDTO(tuple, aliasToIndexMap)
+        userAuthDTO.getPermissions().add(
+                new PermissionDTO(tuple, aliasToIndexMap)
         );
         return userAuthDTO;
     }

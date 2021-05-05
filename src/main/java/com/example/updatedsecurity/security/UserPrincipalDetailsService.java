@@ -1,6 +1,6 @@
 package com.example.updatedsecurity.security;
 
-import com.example.updatedsecurity.Dto.GroupDTO;
+import com.example.updatedsecurity.Dto.PermissionDTO;
 import com.example.updatedsecurity.repositories.UserRepository;
 import com.example.updatedsecurity.services.HelperService;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,10 +27,10 @@ public class UserPrincipalDetailsService implements UserDetailsService {
         var user = userRepository.loadUserByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("user not found"));
 
-        List<GroupDTO> groupDTOList = new ArrayList<>(0);
+        List<PermissionDTO> permissionDTOList = new ArrayList<>(0);
 
         return new UserPrincipal(user.getId().toString(), user.getEmail(),
-                user.getName(), user.getPassword(), groupDTOList);
+                user.getName(), user.getPassword(),"", permissionDTOList);
     }
 
     public UserDetails loadUserById(String idStr) throws UsernameNotFoundException {
@@ -39,6 +39,6 @@ public class UserPrincipalDetailsService implements UserDetailsService {
             throw  new UsernameNotFoundException("User not found");
         }
         var user = userList.get(0);
-        return new UserPrincipal("", "", user.getName(), "", user.getGroups());
+        return new UserPrincipal("", "", user.getName(), "", user.getRole(), user.getPermissions());
     }
 }

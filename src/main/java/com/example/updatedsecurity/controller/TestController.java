@@ -19,4 +19,10 @@ public class TestController {
     public String adminAccess() {
         return ">>> Admin Contents";
     }
+
+    @GetMapping("/admin/create")
+    public String x() {return "admin create";}
+
+    @GetMapping("/admin/delete")
+    public String y() {return "admin delete";}
 }

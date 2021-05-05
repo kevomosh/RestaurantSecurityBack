@@ -1,16 +1,13 @@
 package com.example.updatedsecurity.controller;
 
 import com.example.updatedsecurity.Dto.UserAuthDTO;
+import com.example.updatedsecurity.inpDTO.GenInp;
 import com.example.updatedsecurity.inpDTO.LogInInp;
 import com.example.updatedsecurity.inpDTO.RegisterInp;
-import com.example.updatedsecurity.model.Group;
-import com.example.updatedsecurity.model.User;
 import com.example.updatedsecurity.services.AuthService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,16 +29,25 @@ public class AuthController {
         return authService.LogIn(logInInp);
     }
 
-    @PostMapping("createGroup/{code}/{name}")
-    public Group createGroup(@PathVariable String code,
-                             @PathVariable String name) {
-        return authService.addGroup(code, name);
-    }
-    @PostMapping("/{code}/{username}")
-    public String addGroupToUser(@PathVariable String code,
-                             @PathVariable String username) {
-        return authService.addGroupToUser(username,code);
+    @PostMapping("createPermission/{code}")
+    public void createPermission(@PathVariable String code) {
+         authService.createPermission(code);
     }
 
+    @PostMapping("/{username}")
+    public String addGroupToUser(@RequestBody GenInp genInp,
+                                 @PathVariable String username) {
+        return authService.addPermissionToUser(username, genInp);
+    }
+
+    @GetMapping("/byId/{idStr}")
+    public List<UserAuthDTO> blae(@PathVariable String idStr) {
+        return authService.authDetailsById(idStr);
+    }
+
+    @GetMapping()
+    public List<UserAuthDTO> blaze() {
+        return authService.authDetails();
+    }
 
 }

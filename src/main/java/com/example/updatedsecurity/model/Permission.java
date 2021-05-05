@@ -10,27 +10,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "principle_groups")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Group {
+public class Permission {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true ,nullable = false)
     private String code;
 
-    private String name;
-
-    @ManyToMany(mappedBy = "userGroups")
+    @ManyToMany(mappedBy = "userPermissions")
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-    public Group(String code, String name) {
+    public Permission(String code) {
         this.code = code;
-        this.name = name;
     }
 
     @Override
@@ -38,17 +34,14 @@ public class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Group group = (Group) o;
+        Permission that = (Permission) o;
 
-        if (!getId().equals(group.getId())) return false;
-        return getCode().equals(group.getCode());
+        if (getId() != null ? !getId().equals(that.getId()) : that.getId() != null) return false;
+        return getCode().equals(that.getCode());
     }
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
-        result = 31 * result + getCode().hashCode();
-        return result;
+        return getCode().hashCode();
     }
 }
-

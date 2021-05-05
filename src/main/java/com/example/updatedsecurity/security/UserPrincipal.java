@@ -1,6 +1,6 @@
 package com.example.updatedsecurity.security;
 
-import com.example.updatedsecurity.Dto.GroupDTO;
+import com.example.updatedsecurity.Dto.PermissionDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,23 +14,30 @@ public class UserPrincipal implements UserDetails {
     private String email;
     private String password;
     private String name;
-    private List<GroupDTO> groupDTOList;
+    private String role;
+    private List<PermissionDTO> permissionDTOList;
 
     public UserPrincipal(String id, String email,String name,  String password,
-                         List<GroupDTO> groupDTOList) {
+                         String role,
+                         List<PermissionDTO> permissionDTOList) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.password = password;
-        this.groupDTOList = groupDTOList;
+        this.role = role;
+        this.permissionDTOList = permissionDTOList;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>(groupDTOList.size());
-
-        for(GroupDTO userGroupDTO: groupDTOList){
-            authorities.add(new SimpleGrantedAuthority(userGroupDTO.getCode()));
+        List<GrantedAuthority> authorities = new ArrayList<>(permissionDTOList.size());
+        if (role.equals("A")) {
+            authorities.add(new SimpleGrantedAuthority("ADMIN"));
+        }
+         else {
+            for(PermissionDTO userPermissionDTO : permissionDTOList){
+                authorities.add(new SimpleGrantedAuthority(role + "_"  + userPermissionDTO.getCode()));
+            }
         }
         return authorities;
     }
@@ -44,6 +51,8 @@ public class UserPrincipal implements UserDetails {
     public String getUsername() {
         return name;
     }
+
+    public String getRole() {return role; }
 
     public String getEmail(){
         return email;

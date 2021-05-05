@@ -23,17 +23,18 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    //@Column(nullable = false)
-   // private Role role;
+    @Column(nullable = false)
+    private Role role;
+
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
-    @JoinTable(name = "user_groups",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "group_id"))
-    private Set<Group> userGroups = new HashSet<>();
+    @JoinTable(name = "user_permissions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Set<Permission> userPermissions = new HashSet<>();
 
     public User() {
     }
@@ -44,30 +45,17 @@ public class User {
         this.password = password;
     }
 
-//    public User(String name, String email, String password, Role role) {
-//        this.name = name;
-//        this.email = email;
-//        this.password = password;
-//        this.role = role;
-//    }
 
-    public void addUserGroups(Group group) {
-        userGroups.add(group);
-        group.getUsers().add(this);
+    public void addPermission(Permission permission) {
+        userPermissions.add(permission);
+        permission.getUsers().add(this);
     }
 
-    public void removeUserGroups(Group group) {
-        userGroups.remove(group);
-        group.getUsers().remove(this);
+    public void removePermission(Permission permission) {
+        userPermissions.remove(permission);
+        permission.getUsers().remove(this);
     }
 
-    public Set<Group> getUserGroups() {
-        return userGroups;
-    }
-
-    public void setUserGroups(Set<Group> userGroups) {
-        this.userGroups = userGroups;
-    }
 
     public UUID getId() {
         return id;
@@ -97,13 +85,21 @@ public class User {
         return password;
     }
 
-//    public Role getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(Role role) {
-//        this.role = role;
-//    }
+    public Set<Permission> getUserPermissions() {
+        return userPermissions;
+    }
+
+    public void setUserPermissions(Set<Permission> userPermissions) {
+        this.userPermissions = userPermissions;
+    }
+
+        public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 
     public void setPassword(String password) {
         this.password = password;

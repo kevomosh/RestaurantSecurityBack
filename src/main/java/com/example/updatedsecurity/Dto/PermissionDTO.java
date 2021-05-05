@@ -2,12 +2,12 @@ package com.example.updatedsecurity.Dto;
 
 import java.util.Map;
 
-public class GroupDTO {
-    public static final String CODE_ALIAS = "g_code";
+public class PermissionDTO {
+    public static final String CODE_ALIAS = "p_code";
 
     private String code;
 
-    public GroupDTO(
+    public PermissionDTO(
             Object[] tuples,
             Map<String, Integer> aliasToIndexMap){
         this.code = String.valueOf(tuples[aliasToIndexMap.get(CODE_ALIAS)]).toUpperCase();

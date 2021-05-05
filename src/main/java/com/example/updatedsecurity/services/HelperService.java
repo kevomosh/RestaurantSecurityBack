@@ -27,10 +27,11 @@ public class HelperService {
                     "select  " +
                     "u.email as u_email," +
                     "u.name as u_name, " +
-                    "g.code as g_code " +
+                    "u.role as u_role," +
+                    "p.code as p_code " +
                     "from users u " +
-                    "join user_groups ug on u.id = ug.user_id " +
-                    "join principle_groups g on ug.group_id = g.id " +
+                    "join user_permissions up on u.id = up.user_id " +
+                    "join permission p on up.permission_id = p.id " +
                     "where u.id = :userId")
                     .setParameter("userId", id)
                     .unwrap(Query.class)
@@ -43,6 +44,5 @@ public class HelperService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid id");
         }
-
     }
 }

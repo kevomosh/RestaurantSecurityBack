@@ -14,7 +14,7 @@ spring:
       max-file-size: 5MB
       max-request-size: 10MB
   datasource:
-    url: ${DATASOURCE_URL:${db-url:jdbc:postgresql://localhost:5432/updated_security}}
+    url: ${DATASOURCE_URL:${db-url:jdbc:postgresql://localhost:5432/sec_priviledge}}
     username: ${POSTGRES_USER:${DATASOURCE_USERNAME:${db-user:postgres}}}
     password: ${POSTGRES_PASSWORD:${DATASOURCE_PASSWORD:${db-pass:postgres}}}
     driver-class-name: org.postgresql.Driver
