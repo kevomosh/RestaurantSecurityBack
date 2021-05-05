@@ -1,36 +1,44 @@
 package com.example.updatedsecurity.security;
 
+import com.example.updatedsecurity.Dto.GroupDTO;
 import com.example.updatedsecurity.repositories.UserRepository;
-import org.springframework.http.HttpStatus;
+import com.example.updatedsecurity.services.HelperService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserPrincipalDetailsService implements UserDetailsService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final HelperService helperService;
 
-    public UserPrincipalDetailsService(UserRepository userRepository) {
+    public UserPrincipalDetailsService(UserRepository userRepository,
+                                       HelperService helperService) {
         this.userRepository = userRepository;
+        this.helperService = helperService;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        var user = userRepository.findUserByName(name).orElseThrow(
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        var user = userRepository.loadUserByEmail(email).orElseThrow(
                 () -> new UsernameNotFoundException("user not found"));
 
-        return new UserPrincipal(user);
+        List<GroupDTO> groupDTOList = new ArrayList<>(0);
+
+        return new UserPrincipal(user.getId().toString(), user.getEmail(),
+                user.getName(), user.getPassword(), groupDTOList);
     }
 
     public UserDetails loadUserById(String idStr) throws UsernameNotFoundException {
-        var id = UUID.fromString(idStr);
-        var user = userRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found")
-        );
-        return new UserPrincipal(user);
+        var userList = helperService.authDetailsById(idStr);
+        if (userList.isEmpty()){
+            throw  new UsernameNotFoundException("User not found");
+        }
+        var user = userList.get(0);
+        return new UserPrincipal("", "", user.getName(), "", user.getGroups());
     }
 }

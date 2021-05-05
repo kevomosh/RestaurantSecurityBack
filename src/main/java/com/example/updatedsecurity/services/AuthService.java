@@ -1,6 +1,5 @@
 package com.example.updatedsecurity.services;
 
-import com.example.updatedsecurity.enums.Role;
 import com.example.updatedsecurity.inpDTO.LogInInp;
 import com.example.updatedsecurity.inpDTO.RegisterInp;
 import com.example.updatedsecurity.model.Group;
@@ -16,11 +15,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
+
 
 @Service
 public class AuthService {
@@ -30,6 +28,7 @@ public class AuthService {
     private JWTUtility jwtUtility;
     private UserPrincipalDetailsService userPrincipalDetailsService;
     private GroupRepository groupRepository;
+
 
     public AuthService(UserRepository userRepository,
                        AuthenticationManager authenticationManager,
@@ -44,16 +43,10 @@ public class AuthService {
         this.groupRepository = groupRepository;
     }
 
+
     public String register(RegisterInp registerInp) {
         var newUser = new User(registerInp.getName(), registerInp.getEmail(),
                 encoder.encode(registerInp.getPassword()));
-//
-//        var role = registerInp.getRole();
-//        if (StringUtils.hasLength(role) && role.equals("sonko")) {
-//            newUser.setRole(Role.ADMIN);
-//        } else {
-//            newUser.setRole(Role.USER);
-//        }
         userRepository.save(newUser);
         return "registered";
     }
@@ -62,7 +55,7 @@ public class AuthService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            logInInp.getName(),
+                            logInInp.getEmail(),
                             logInInp.getPassword()
                     )
             );
@@ -81,12 +74,6 @@ public class AuthService {
     public Group addGroup(String code, String name) {
         var group = new Group(code, name);
         groupRepository.save(group);
-
-//        var user = userRepository.findUserByName(username).orElseThrow(
-//                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "user not there")
-//        );
-//
-//        user.addUserGroups(group);
         return group;
     }
 
@@ -103,9 +90,4 @@ public class AuthService {
         return "done";
     }
 
-    public User getUserByName(String name) {
-        return userRepository.getUserByName(name).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "not there")
-        );
-    }
 }

@@ -1,5 +1,6 @@
 package com.example.updatedsecurity.repositories;
 
+import com.example.updatedsecurity.Dto.LoginDTO;
 import com.example.updatedsecurity.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,10 +12,9 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-    Optional<User> findUserByEmail(String email);
-
     Optional<User> findUserByName(String name);
 
-    @Query(value = "select  u from User u left join fetch u.userGroups where u.name = :name")
-    Optional<User> getUserByName(@Param("name") String name);
+    @Query(value = "select new com.example.updatedsecurity.Dto.LoginDTO " +
+            "(u.id, u.email, u.name, u.password) from User u where u.email = :email")
+    Optional<LoginDTO> loadUserByEmail(@Param("email") String email);
 }

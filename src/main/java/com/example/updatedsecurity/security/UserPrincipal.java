@@ -1,7 +1,6 @@
 package com.example.updatedsecurity.security;
 
-import com.example.updatedsecurity.model.Group;
-import com.example.updatedsecurity.model.User;
+import com.example.updatedsecurity.Dto.GroupDTO;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,41 +10,47 @@ import java.util.Collection;
 import java.util.List;
 
 public class UserPrincipal implements UserDetails {
-    private User user;
+    private String id;
+    private String email;
+    private String password;
+    private String name;
+    private List<GroupDTO> groupDTOList;
 
-    public UserPrincipal(User user) {
-        this.user = user;
+    public UserPrincipal(String id, String email,String name,  String password,
+                         List<GroupDTO> groupDTOList) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.groupDTOList = groupDTOList;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> authorities = new ArrayList<>(user.getUserGroups().size());
+        List<GrantedAuthority> authorities = new ArrayList<>(groupDTOList.size());
 
-        for(Group userGroup: user.getUserGroups()){
-            authorities.add(new SimpleGrantedAuthority(userGroup.getCode().toUpperCase()));
+        for(GroupDTO userGroupDTO: groupDTOList){
+            authorities.add(new SimpleGrantedAuthority(userGroupDTO.getCode()));
         }
-//        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + this.user.getRole());
-//        authorities.add(authority);
-
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return name;
     }
 
     public String getEmail(){
-        return user.getEmail();
+        return email;
     }
 
     public String getId(){
-        return user.getId().toString();
+        return id;
     }
 
     @Override
