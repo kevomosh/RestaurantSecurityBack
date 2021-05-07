@@ -40,14 +40,5 @@ public class AuthController {
         return authService.addPermissionToUser(username, genInp);
     }
 
-    @GetMapping("/byId/{idStr}")
-    public List<UserAuthDTO> blae(@PathVariable String idStr) {
-        return authService.authDetailsById(idStr);
-    }
-
-    @GetMapping()
-    public List<UserAuthDTO> blaze() {
-        return authService.authDetails();
-    }
 
 }
