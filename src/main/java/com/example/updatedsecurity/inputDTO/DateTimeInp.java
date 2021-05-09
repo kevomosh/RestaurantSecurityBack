@@ -4,6 +4,9 @@ import lombok.Data;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 @Data
 public class DateTimeInp {
@@ -26,4 +29,13 @@ public class DateTimeInp {
     @Min(0)
     @Max(59)
     private int minute;
+
+    public OffsetDateTime getOffSetDateTime() {
+        ZoneId zoneId = ZoneId.of("Australia/Sydney");
+        var localDateTime = LocalDateTime.of(this.getYear(), this.getMonth(),
+                this.getDay(), this.getHour(), this.getMinute());
+        var zoneOffset = localDateTime.atZone(zoneId).getOffset();
+        return OffsetDateTime.of(localDateTime, zoneOffset);
+    }
+
 }

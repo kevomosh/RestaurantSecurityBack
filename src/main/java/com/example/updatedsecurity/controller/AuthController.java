@@ -1,10 +1,14 @@
 package com.example.updatedsecurity.controller;
 
+import com.example.updatedsecurity.inputDTO.DateTimeInp;
 import com.example.updatedsecurity.inputDTO.GenInp;
 import com.example.updatedsecurity.inputDTO.LogInInp;
 import com.example.updatedsecurity.inputDTO.RegisterInp;
 import com.example.updatedsecurity.services.AuthService;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,6 +40,5 @@ public class AuthController {
                                  @PathVariable String username) {
         return authService.addPermissionToUser(username, genInp);
     }
-
 
 }

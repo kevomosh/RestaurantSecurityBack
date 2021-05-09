@@ -12,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,15 +40,15 @@ public class SittingService {
             var sittingExists =
                     sittingRepository.existsOnDayAndCategory(startEndOfDay.get("startOfDay"),
                             startEndOfDay.get("endOfDay"), categoryStr);
-            var startTime = getOffsetDateTime(sittingInp.getStartTime());
-            var endTime = getOffsetDateTime(sittingInp.getEndTime());
+
 
             if (sittingExists) {
-                errorsList.add(new SittingInpError(categoryStr, startTime, "Sitting already exists"));
+                errorsList.add(new SittingInpError(categoryStr,
+                        sittingInp.getStartTime().getOffSetDateTime(), "Sitting already exists"));
                 break;
             }
 
-            var sitting = new Sitting(sittingInp, startTime, endTime);
+            var sitting = new Sitting(sittingInp);
             sittingRepository.save(sitting);
 
         }
@@ -93,10 +91,9 @@ public class SittingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Theres already a sitting " +
                     "with same category on the day, change date or category");
         }
-        var startTime = getOffsetDateTime(sittingInp.getStartTime());
-        var endTime = getOffsetDateTime(sittingInp.getEndTime());
 
-        sitting.updateSitting(sittingInp, startTime, endTime);
+
+        sitting.updateSitting(sittingInp);
 
         sittingRepository.save(sitting);
         return sitting;
@@ -131,7 +128,7 @@ public class SittingService {
 
     private Map<String, OffsetDateTime> getStartAndEndOfDay(DateTimeInp startTime) {
         Map<String, OffsetDateTime> response = new HashMap<>();
-        var actualDate = getOffsetDateTime(startTime);
+        var actualDate = startTime.getOffSetDateTime();
         var hrs = actualDate.getHour();
         var min = actualDate.getMinute();
         var startOfDay = actualDate.minusHours(hrs).minusMinutes(min);
@@ -142,11 +139,4 @@ public class SittingService {
         return response;
     }
 
-    private OffsetDateTime getOffsetDateTime(DateTimeInp dateTimeInp) {
-        ZoneId zoneId = ZoneId.of("Australia/Sydney");
-        var localDateTime = LocalDateTime.of(dateTimeInp.getYear(), dateTimeInp.getMonth(),
-                dateTimeInp.getDay(), dateTimeInp.getHour(), dateTimeInp.getMinute());
-        var zoneOffset = localDateTime.atZone(zoneId).getOffset();
-        return OffsetDateTime.of(localDateTime, zoneOffset);
-    }
 }

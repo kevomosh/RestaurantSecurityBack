@@ -39,15 +39,13 @@ public class Sitting {
     )
     private List<Reservation> reservations = new ArrayList<>();
 
-    public Sitting(SittingInp sittingInp, OffsetDateTime startTime,
-                   OffsetDateTime endTime) {
-        this.createOrUpdate(sittingInp, startTime, endTime);
+    public Sitting(SittingInp sittingInp) {
+        this.createOrUpdate(sittingInp);
         this.isClosed = false;
     }
 
-    public void updateSitting(SittingInp sittingInp, OffsetDateTime startTime,
-                              OffsetDateTime endTime) {
-        this.createOrUpdate(sittingInp, startTime, endTime);
+    public void updateSitting(SittingInp sittingInp) {
+        this.createOrUpdate(sittingInp);
         this.isClosed = sittingInp.isClosed();
     }
 
@@ -61,12 +59,11 @@ public class Sitting {
         reservation.setSitting(null);
     }
 
-    private void createOrUpdate(SittingInp sittingInp, OffsetDateTime startTime,
-                                OffsetDateTime endTime) {
+    private void createOrUpdate(SittingInp sittingInp) {
         this.category = CategoryEnum.valueOf(sittingInp.getCategoryStr());
         this.capacity = sittingInp.getCapacity();
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startTime = sittingInp.getStartTime().getOffSetDateTime();
+        this.endTime = sittingInp.getEndTime().getOffSetDateTime();
     }
 
     @Override
