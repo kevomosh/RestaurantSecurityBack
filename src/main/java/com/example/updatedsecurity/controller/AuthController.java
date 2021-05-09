@@ -1,13 +1,10 @@
 package com.example.updatedsecurity.controller;
 
-import com.example.updatedsecurity.Dto.UserAuthDTO;
-import com.example.updatedsecurity.inpDTO.GenInp;
-import com.example.updatedsecurity.inpDTO.LogInInp;
-import com.example.updatedsecurity.inpDTO.RegisterInp;
+import com.example.updatedsecurity.inputDTO.GenInp;
+import com.example.updatedsecurity.inputDTO.LogInInp;
+import com.example.updatedsecurity.inputDTO.RegisterInp;
 import com.example.updatedsecurity.services.AuthService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")

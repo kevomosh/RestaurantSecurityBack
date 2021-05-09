@@ -1,11 +1,9 @@
 package com.example.updatedsecurity.services;
 
-import com.example.updatedsecurity.Dto.UserAuthDTO;
-import com.example.updatedsecurity.Dto.UserAuthDTOResultTransformer;
 import com.example.updatedsecurity.enums.Role;
-import com.example.updatedsecurity.inpDTO.GenInp;
-import com.example.updatedsecurity.inpDTO.LogInInp;
-import com.example.updatedsecurity.inpDTO.RegisterInp;
+import com.example.updatedsecurity.inputDTO.GenInp;
+import com.example.updatedsecurity.inputDTO.LogInInp;
+import com.example.updatedsecurity.inputDTO.RegisterInp;
 import com.example.updatedsecurity.model.Permission;
 import com.example.updatedsecurity.model.User;
 import com.example.updatedsecurity.repositories.PermissionRepository;
@@ -13,7 +11,6 @@ import com.example.updatedsecurity.repositories.UserRepository;
 import com.example.updatedsecurity.security.JWTUtility;
 import com.example.updatedsecurity.security.UserPrincipal;
 import com.example.updatedsecurity.security.UserPrincipalDetailsService;
-import org.hibernate.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

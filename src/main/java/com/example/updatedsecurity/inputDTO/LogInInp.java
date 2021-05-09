@@ -1,4 +1,4 @@
-package com.example.updatedsecurity.inpDTO;
+package com.example.updatedsecurity.inputDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterInp {
-    private String name;
+public class LogInInp {
     private String email;
     private String password;
-    private String role;
+
 }

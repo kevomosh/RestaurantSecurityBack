@@ -1,7 +1,7 @@
 package com.example.updatedsecurity.enums;
 
 public enum Role {
-    ADMIN("A"), MANAGER("M"), USER("U");
+    ADMIN("A"), MANAGER("M"), USER("U"), EMPLOYEE("W");
     private String shortRole;
 
     private Role(String shortRole){
@@ -20,6 +20,8 @@ public enum Role {
                 return Role.ADMIN;
             case "M":
                 return Role.MANAGER;
+            case "E":
+                return Role.EMPLOYEE;
             default:
                 throw new IllegalArgumentException("not in records");
         }

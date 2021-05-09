@@ -1,4 +1,4 @@
-package com.example.updatedsecurity.inpDTO;
+package com.example.updatedsecurity.inputDTO;
 
 import java.util.List;
 
