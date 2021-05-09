@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.*;
+import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
@@ -42,5 +43,11 @@ public class ResInp {
     private int noOfGuests;
 
     private String notes;
+
+
+    public OffsetDateTime getEndTime(){
+        return startTime.getOffSetDateTime().plusHours(this.getDurHr())
+                .plusMinutes(this.getDurMin());
+    }
 
 }

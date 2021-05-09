@@ -1,11 +1,9 @@
 package com.example.updatedsecurity.services;
 
 import com.example.updatedsecurity.Dto.ResWithFreeTable;
-import com.example.updatedsecurity.Dto.StartEndTimeCapacityDTO;
 import com.example.updatedsecurity.enums.CategoryEnum;
 import com.example.updatedsecurity.enums.ResStatusEnum;
 import com.example.updatedsecurity.inputDTO.CreateResInp;
-import com.example.updatedsecurity.inputDTO.DateTimeInp;
 import com.example.updatedsecurity.model.Reservation;
 import com.example.updatedsecurity.model.Sitting;
 import com.example.updatedsecurity.repositories.ReservationRepository;
@@ -15,9 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -46,12 +44,11 @@ public class ReservationService {
                 .orElseThrow(() ->
                         new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sitting not available"));
 
-        var startEndTimeCapacityDto = checkAndGetStartEndTime(sitting, createResInp);
+        var capacityAndGuestNumbers = getCapacityAndGuestNumbers(sitting, createResInp);
 
-        reservation.updateReservation(createResInp, startEndTimeCapacityDto.getStartTime(),
-                startEndTimeCapacityDto.getEndTime());
+        reservation.updateReservation(createResInp);
 
-        if (startEndTimeCapacityDto.getGuestNumbers() == startEndTimeCapacityDto.getAvailableCapacity()) {
+        if (capacityAndGuestNumbers.get("guestNumbers").equals(capacityAndGuestNumbers.get("availableCapacity"))) {
             sitting.setCategory(CategoryEnum.BOOKED_OUT);
         }
 
@@ -67,15 +64,15 @@ public class ReservationService {
                         new ResponseStatusException(HttpStatus.BAD_REQUEST, "Sitting not available"));
 
 
-        var startEndTimeCapacityDto = checkAndGetStartEndTime(sitting, createResInp);
+        var capacityAndGuestNumbers = getCapacityAndGuestNumbers(sitting, createResInp);
 
-        var reservation = new Reservation(createResInp.getResInp(),
-                startEndTimeCapacityDto.getStartTime(), startEndTimeCapacityDto.getEndTime());
+        var reservation = new Reservation(createResInp.getResInp());
 
         reservation.addTables(createResInp.getTableInpSet());
         sitting.addReservation(reservation);
 
-        if (startEndTimeCapacityDto.getGuestNumbers() == startEndTimeCapacityDto.getAvailableCapacity()) {
+
+        if (capacityAndGuestNumbers.get("guestNumbers").equals(capacityAndGuestNumbers.get("availableCapacity"))) {
             sitting.setCategory(CategoryEnum.BOOKED_OUT);
         }
         sittingRepository.save(sitting);
@@ -117,7 +114,8 @@ public class ReservationService {
     }
 
 
-    private StartEndTimeCapacityDTO checkAndGetStartEndTime(Sitting sitting, CreateResInp createResInp){
+    private Map<String, Integer> getCapacityAndGuestNumbers(Sitting sitting, CreateResInp createResInp){
+        Map<String, Integer> res = new HashMap<>();
 
         if (sitting.getCategory() == CategoryEnum.BOOKED_OUT ||
                 sitting.getCategory() == CategoryEnum.PRIVATE_EVENT) {
@@ -134,22 +132,15 @@ public class ReservationService {
         }
         var resInput = createResInp.getResInp();
 
-        var startTime = getOffsetDateTime(resInput.getStartTime());
-        var endTime = startTime.plusHours(resInput.getDurHr()).plusMinutes(resInput.getDurMin());
+        var startTime = resInput.getStartTime().getOffSetDateTime();
 
         if (startTime.isBefore(sitting.getStartTime()) ||  startTime.isAfter(sitting.getEndTime())
-                || endTime.isAfter(sitting.getEndTime().plusMinutes(30))) {
+                || resInput.getEndTime().isAfter(sitting.getEndTime().plusMinutes(30))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking is not within sitting times");
         }
-
-        return new StartEndTimeCapacityDTO(startTime, endTime, guestNumbers, availableCapacity);
+        res.put("guestNumbers", guestNumbers);
+        res.put("availableCapacity", availableCapacity);
+        return res;
     }
 
-    private OffsetDateTime getOffsetDateTime(DateTimeInp dateTimeInp) {
-        ZoneId zoneId = ZoneId.of("Australia/Sydney");
-        var localDateTime = LocalDateTime.of(dateTimeInp.getYear(), dateTimeInp.getMonth(),
-                dateTimeInp.getDay(), dateTimeInp.getHour(), dateTimeInp.getMinute());
-        var zoneOffset = localDateTime.atZone(zoneId).getOffset();
-        return OffsetDateTime.of(localDateTime, zoneOffset);
-    }
 }

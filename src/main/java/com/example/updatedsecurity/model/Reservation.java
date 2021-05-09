@@ -26,7 +26,6 @@ public class Reservation {
     @SequenceGenerator(name = "res_generator", sequenceName = "reservation_seq")
     private Long id;
 
-
     @Enumerated(value = EnumType.STRING)
     private SourceEnum source;
 
@@ -67,12 +66,12 @@ public class Reservation {
     )
     private List<Tables> tables = new ArrayList<>();
 
-    public Reservation(ResInp info,   OffsetDateTime startTime, OffsetDateTime endTime){
-        createOrUpdateReservation(info, startTime, endTime);
+    public Reservation(ResInp info){
+        createOrUpdateReservation(info);
     }
 
-    public void updateReservation(CreateResInp createResInp, OffsetDateTime startTime, OffsetDateTime endTime) {
-        createOrUpdateReservation(createResInp.getResInp(), startTime, endTime);
+    public void updateReservation(CreateResInp createResInp) {
+        createOrUpdateReservation(createResInp.getResInp());
 
         var newTableNumberList = createResInp.getTableInpSet()
                 .stream()
@@ -99,15 +98,14 @@ public class Reservation {
                 });
     }
 
-    private void createOrUpdateReservation(ResInp info,
-                                           OffsetDateTime startTime, OffsetDateTime endTime){
+    private void createOrUpdateReservation(ResInp info){
         this.source = SourceEnum.valueOf(info.getSourceStr());
         this.firstName = info.getFirstName();
         this.lastName = info.getLastName();
         this.email = info.getEmail();
         this.phoneNumber = info.getPhoneNumber();
-        this.startTime = startTime;
-        this.endTime =  endTime;
+        this.startTime = info.getStartTime().getOffSetDateTime();
+        this.endTime =  info.getEndTime();
         this.noOfGuests = info.getNoOfGuests();
         this.notes = info.getNotes();
         this.status = ResStatusEnum.PENDING;
